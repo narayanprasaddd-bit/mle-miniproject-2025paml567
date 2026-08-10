@@ -1,0 +1,48 @@
+# Conda environment for PCAM ZC412 Mini-Project I
+# M3 Chapter 3.2.2: Conda environment.yml provides a STRONG reproducibility
+# guarantee because it captures system-level binary dependencies (BLAS, MKL),
+# not only Python package versions.
+#
+# Recreate with:  conda env create -f environment.yml
+# Update with:    conda env update -f environment.yml --prune
+# Re-export with: conda env export --no-builds > environment.yml
+
+name: mle
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11
+
+  # ---- Core data / ML ----
+  - pandas=2.2.*
+  - numpy=1.26.*
+  - scikit-learn=1.5.*
+  - scipy=1.13.*
+
+  # ---- Data validation (M2) ----
+  - pandera=0.20.*
+
+  # ---- Experiment tracking + data versioning (M3) ----
+  - mlflow=2.15.*
+  - dvc=3.51.*
+
+  # ---- Serving (M4) ----
+  - fastapi=0.111.*
+  - uvicorn=0.30.*
+  - pydantic=2.8.*
+
+  # ---- Testing (M6) ----
+  - pytest=8.2.*
+
+  # ---- Utilities ----
+  - joblib=1.4.*
+  - pyyaml=6.0.*
+  - requests=2.32.*
+  - tabulate=0.9.*
+
+  - pip
+  - pip:
+      # Kept on pip: conda-forge builds lag upstream for these
+      - python-multipart==0.0.9

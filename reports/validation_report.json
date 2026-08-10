@@ -1,0 +1,20 @@
+{
+  "timestamp_utc": "2026-08-10T21:44:00.991200+00:00",
+  "task": "sentiment",
+  "source": "data/raw/_corrupt_test.csv",
+  "rows": 27481,
+  "columns": 10,
+  "status": "FAIL",
+  "blocking_failures": [
+    "[L1/L2] textID: field_uniqueness (failed on '549e992a42')",
+    "[L1/L2] textID: field_uniqueness (failed on '549e992a42')",
+    "[L1/L2] sentiment: isin(['negative', 'neutral', 'positive']) (failed on 'POSITIVE!!')",
+    "[L1/L2] Time of Tweet: isin(['morning', 'noon', 'night']) (failed on 'midnight')",
+    "[L3] uniqueness violation on 'textID': 27481 rows but 27480 distinct keys (1 duplicates)"
+  ],
+  "findings": [
+    "[L4/BR-01] column 'Country' repeats exactly on a 195-row cycle across 585 compared positions. Column is positionally appended, not key-joined: it carries no per-record information and MUST be excluded from features.",
+    "[L4/BR-03] 39.9% of 'text' values have leading whitespace. The shared feature module MUST strip identically at training and serving time (skew vector).",
+    "[L4/BR-04] 1 row(s) have a null 'text'. These are dropped during cleaning and the drop is logged -- never silently filtered."
+  ]
+}

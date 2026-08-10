@@ -1,0 +1,57 @@
+# ---- Data (tracked by DVC, not Git) ----
+/data/raw/*
+/data/processed/*
+!/data/raw/.gitkeep
+!/data/processed/.gitkeep
+*.csv
+*.db
+*.sqlite
+*.sqlite3
+!configs/*.csv
+
+# ---- Model artifacts (tracked by DVC / MLflow) ----
+/models/*
+!/models/.gitkeep
+*.pkl
+*.joblib
+*.h5
+*.onnx
+
+# ---- MLflow ----
+mlruns/
+mlartifacts/
+mlflow.db
+
+# ---- DVC ----
+/.dvc/cache
+/.dvc/tmp
+/.dvc/plots
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# ---- Environments ----
+venv/
+.venv/
+env/
+.env
+.python-version
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# ---- Logs ----
+*.log
+logs/
+!reports/*.log

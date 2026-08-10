@@ -1,0 +1,84 @@
+# ============================================================================
+# Task configuration: Support Ticket Urgency / Intent Classification (SECONDARY)
+# ----------------------------------------------------------------------------
+# STATUS: STRETCH GOAL. Not on the critical path for the Mini-Project I
+# submission. Included to demonstrate the central architectural claim of this
+# repository: a second classification task requires a NEW CONFIG FILE, not new
+# pipeline code.
+#
+# This config is intentionally committed BEFORE the task is implemented, so the
+# generality claim can be verified against the pipeline rather than asserted.
+# ============================================================================
+
+task:
+  name: tickets
+  description: "Multi-class urgency/intent classification of support tickets"
+  type: classification
+  n_classes: 4
+
+data:
+  raw_train: data/raw/tickets_train.csv    # not yet acquired
+  raw_test: data/raw/tickets_test.csv
+  encoding: utf-8
+
+  text_column: ticket_body
+  label_column: urgency
+  id_column: ticket_id
+
+  excluded_columns:
+    - assigned_agent      # leakage: assignment happens AFTER triage
+    - resolution_time     # leakage: only known after the ticket closes
+    - customer_tier       # available at inference, but out of scope for v1
+
+schema:
+  labels: [low, medium, high, critical]
+  text_min_chars: 1
+  text_max_chars: 4000        # tickets are far longer than tweets
+  allow_null_text: false
+
+  expected_label_proportions: null   # to be measured from the acquired dataset
+  label_proportion_tolerance: 0.05
+
+  fabricated_cycle_length: null
+  fabricated_cycle_column: null
+
+features:
+  method: tfidf
+  lowercase: true
+  strip_whitespace: true
+  ngram_range: [1, 2]
+  max_features: 30000         # larger vocabulary: longer documents
+  min_df: 3
+  sublinear_tf: true
+  stop_words: null
+
+split:
+  test_size: 0.2
+  random_state: 42
+  stratify: true
+
+training:
+  random_state: 42
+  primary_metric: f1_macro    # ordinal severity: the 'critical' class matters most
+  secondary_metrics: [accuracy, f1_weighted, precision_macro, recall_macro]
+
+serving:
+  endpoint: /predict/urgency
+  model_version: tickets-v1
+  low_confidence_threshold: 0.45
+
+monitoring:
+  drift_signals:
+    oov_rate:
+      threshold: 0.15
+    token_frequency_chi2:
+      top_k: 300
+      p_value_threshold: 0.01
+    confidence_ks:
+      p_value_threshold: 0.01
+    doc_length_sigma:
+      investigate: 1.0
+      halt: 2.0
+  retraining_trigger:
+    min_signals_breached: 2
+    min_new_samples: 300

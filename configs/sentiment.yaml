@@ -1,0 +1,95 @@
+# ============================================================================
+# Task configuration: Review / Tweet Sentiment Classification  (PRIMARY)
+# ----------------------------------------------------------------------------
+# The pipeline is task-agnostic. Every stage (ingest -> validate -> features ->
+# train -> serve -> monitor) reads its behaviour from a config file like this
+# one. Adding a second task requires a new config, not new pipeline code.
+# ============================================================================
+
+task:
+  name: sentiment
+  description: "3-class sentiment classification of short social text"
+  type: classification
+  n_classes: 3
+
+data:
+  # Source: Kaggle "Tweet Sentiment Extraction" (Maggi Mars / Kaggle competition)
+  # NOTE: the archive also contained a Sentiment140 export that was REJECTED at
+  # ingestion. See docs/DATA_QUALITY_INCIDENT.md for the full finding.
+  raw_train: data/raw/train.csv
+  raw_test: data/raw/test.csv
+  encoding: latin-1          # file is ISO-8859; utf-8 read raises UnicodeDecodeError
+
+  text_column: text
+  label_column: sentiment
+  id_column: textID
+
+  # Columns present in the file but deliberately EXCLUDED from the feature set.
+  # Justification recorded in docs/DATA_QUALITY_INCIDENT.md section 3.
+  excluded_columns:
+    - selected_text          # label leakage: it is a span OF the target sentiment
+    - Time of Tweet          # fabricated metadata, no signal (see business rule BR-02)
+    - Age of User            # fabricated metadata, no signal
+    - Country                # fabricated: repeats on a fixed 195-row cycle (BR-01)
+    - Population -2020       # derived from the fabricated Country column
+    - Land Area (Km²)        # derived from the fabricated Country column
+    - Density (P/Km²)        # derived from the fabricated Country column
+
+schema:
+  labels: [negative, neutral, positive]
+  text_min_chars: 1
+  text_max_chars: 400         # observed max 159; headroom for serving-time inputs
+  allow_null_text: false      # 1 known null at textID=fdb77c3752 -> dropped + logged
+
+  # Level-3 statistical baselines, asserted against the training distribution.
+  # Tolerances are absolute proportions.
+  expected_label_proportions:
+    neutral: 0.4046
+    positive: 0.3123
+    negative: 0.2831
+  label_proportion_tolerance: 0.05
+
+  # Fabricated-column detection (Level 4 business rule)
+  fabricated_cycle_length: 195
+  fabricated_cycle_column: Country
+
+features:
+  method: tfidf
+  lowercase: true
+  strip_whitespace: true      # 40% of rows have a leading space -> skew vector
+  ngram_range: [1, 2]
+  max_features: 20000
+  min_df: 2
+  sublinear_tf: true
+  stop_words: null            # negation words ("not", "no") carry sentiment signal
+
+split:
+  test_size: 0.2
+  random_state: 42            # M3 3.2.1: seed is a correctness requirement
+  stratify: true
+
+training:
+  random_state: 42
+  primary_metric: f1_macro    # macro, not accuracy: 3 classes, mild imbalance
+  secondary_metrics: [accuracy, f1_weighted, precision_macro, recall_macro]
+
+serving:
+  endpoint: /predict/sentiment
+  model_version: sentiment-v1
+  low_confidence_threshold: 0.50   # below this, response is flagged for review
+
+monitoring:
+  drift_signals:
+    oov_rate:                  # share of tokens absent from the fitted vocabulary
+      threshold: 0.15
+    token_frequency_chi2:      # M2 2.5.3: chi-squared for categorical
+      top_k: 200
+      p_value_threshold: 0.01
+    confidence_ks:             # KS test on predict_proba distribution
+      p_value_threshold: 0.01
+    doc_length_sigma:          # M2 2.5.3: >1 sigma investigate, >2 sigma stop
+      investigate: 1.0
+      halt: 2.0
+  retraining_trigger:
+    min_signals_breached: 2    # a single signal is noise; two is evidence
+    min_new_samples: 500
