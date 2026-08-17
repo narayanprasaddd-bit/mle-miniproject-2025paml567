@@ -87,6 +87,11 @@ monitoring:
       p_value_threshold: 0.01
     confidence_ks:             # KS test on predict_proba distribution
       p_value_threshold: 0.01
+      # Effect-size floor. A KS test on large samples flags shifts far too
+      # small to act on: measured 0.631 -> 0.622 at p=0.0025 on the format-drift
+      # window. Requiring a minimum absolute change in mean confidence prevents
+      # statistically-significant-but-irrelevant alerts.
+      min_effect_size: 0.02
     doc_length_sigma:          # M2 2.5.3: >1 sigma investigate, >2 sigma stop
       investigate: 1.0
       halt: 2.0

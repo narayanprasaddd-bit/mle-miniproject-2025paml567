@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-08-17T19:00:27.395606+00:00",
+  "timestamp_utc": "2026-08-17T22:05:15.847968+00:00",
   "primary_metric": "f1_macro",
   "runs": [
     {
       "run": "run1_baseline_logreg",
-      "run_id": "ed72d76c468f46208c0eb48df7a59f34",
+      "run_id": "6ef0024377b44b1d978efd3084de3256",
       "varied": "none (baseline)",
       "hypothesis": "A linear model on TF-IDF features establishes the floor. Text classification on lexically obvious sentiment is largely a word-presence problem, so this should already be competitive.",
       "params": {
@@ -22,7 +22,7 @@
     },
     {
       "run": "run2_linearsvc",
-      "run_id": "5ed16d651e6945eba82288a74b952378",
+      "run_id": "9f9841e70e1f45f08e64cda168ee1228",
       "varied": "algorithm (logistic -> hinge loss)",
       "hypothesis": "LinearSVC optimises a hinge loss and a maximum margin rather than likelihood. On high-dimensional sparse text it often edges out logistic regression. Expected: comparable, possibly +0.01 F1. Trade-off: no native predict_proba, which the serving layer and the M5 confidence drift signal both require.",
       "params": {
@@ -39,7 +39,7 @@
     },
     {
       "run": "run3_logreg_C0.5",
-      "run_id": "ee14b879197743cb89318f1f1be1770e",
+      "run_id": "b1fc952d224d47218f4147349a7ebb51",
       "varied": "regularisation strength (C: 1.0 -> 0.5)",
       "hypothesis": "20,000 features against 21,984 training rows is a wide problem, so stronger regularisation may generalise better. Halving C doubles the penalty. Expected: small change either way -- which is itself the useful result, because a flat response means the baseline was not overfitting.",
       "params": {
@@ -57,5 +57,5 @@
     }
   ],
   "selected_run": "run1_baseline_logreg",
-  "selected_run_id": "ed72d76c468f46208c0eb48df7a59f34"
+  "selected_run_id": "6ef0024377b44b1d978efd3084de3256"
 }

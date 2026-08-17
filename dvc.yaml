@@ -91,6 +91,16 @@ stages:
       - reports/reproducibility_audit.json:
           cache: false
 
-  # ------------------------------------------------------------------------
-  # Sprint 4 will add:  monitor (drift signals against the baseline manifest)
-  # ------------------------------------------------------------------------
+  monitor:
+    desc: "M5 drift detection across five simulated traffic windows."
+    cmd: python -m src.monitoring.drift --config configs/sentiment.yaml
+    deps:
+      - data/processed/feature_store.db
+      - models/feature_bundle.joblib
+      - models/classifier.joblib
+      - src/monitoring/drift.py
+      - src/monitoring/simulate.py
+      - configs/sentiment.yaml
+    outs:
+      - reports/drift_report.json:
+          cache: false

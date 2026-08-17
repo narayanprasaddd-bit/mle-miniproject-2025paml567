@@ -76,6 +76,7 @@ monitoring:
       p_value_threshold: 0.01
     confidence_ks:
       p_value_threshold: 0.01
+      min_effect_size: 0.02
     doc_length_sigma:
       investigate: 1.0
       halt: 2.0

@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-08-17T18:07:44.055350+00:00",
+  "timestamp_utc": "2026-08-17T22:03:44.354414+00:00",
   "task": "sentiment",
   "source": "data/processed/clean.parquet",
   "rows_total": 27480,

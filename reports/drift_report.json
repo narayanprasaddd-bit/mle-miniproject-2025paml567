@@ -1,0 +1,290 @@
+{
+  "timestamp_utc": "2026-08-17T22:16:12.375469+00:00",
+  "model_version": "sentiment-v1",
+  "trigger_policy": {
+    "min_signals_breached": 2,
+    "min_new_samples": 500
+  },
+  "windows": [
+    {
+      "window": "W0_control_no_drift",
+      "n_baseline": 5496,
+      "n_current": 600,
+      "signals": [
+        {
+          "signal": "oov_rate",
+          "value": 0.0936,
+          "threshold": 0.15,
+          "breached": false,
+          "interpretation": "vocabulary consistent with training"
+        },
+        {
+          "signal": "token_frequency_chi2",
+          "value": 0.9107,
+          "statistic": 172.74,
+          "top_k": 200,
+          "threshold": 0.01,
+          "breached": false,
+          "interpretation": "token mix consistent with baseline"
+        },
+        {
+          "signal": "confidence_ks",
+          "value": 0.825238,
+          "statistic": 0.0267,
+          "baseline_mean_confidence": 0.6314,
+          "current_mean_confidence": 0.6337,
+          "delta": 0.0023,
+          "threshold": 0.01,
+          "min_effect": 0.02,
+          "statistically_significant": false,
+          "materially_large": false,
+          "breached": false,
+          "interpretation": "confidence distribution stable"
+        },
+        {
+          "signal": "doc_length_sigma",
+          "value": 0.0476,
+          "baseline_mean_tokens": 12.89,
+          "current_mean_tokens": 13.21,
+          "baseline_sigma": 6.88,
+          "threshold_investigate": 1.0,
+          "threshold_halt": 2.0,
+          "level": "OK",
+          "breached": false,
+          "interpretation": "mean length moved 0.05 sigma (12.9 -> 13.2 tokens)"
+        }
+      ],
+      "signals_breached": [],
+      "n_breached": 0,
+      "decision": "NO_ACTION",
+      "rationale": "No signals breached. Traffic consistent with training."
+    },
+    {
+      "window": "W1_vocabulary_drift",
+      "n_baseline": 5496,
+      "n_current": 600,
+      "signals": [
+        {
+          "signal": "oov_rate",
+          "value": 0.2052,
+          "threshold": 0.15,
+          "breached": true,
+          "interpretation": "new vocabulary entering the traffic"
+        },
+        {
+          "signal": "token_frequency_chi2",
+          "value": 0.0,
+          "statistic": 3020.54,
+          "top_k": 200,
+          "threshold": 0.01,
+          "breached": true,
+          "interpretation": "token mix has shifted significantly"
+        },
+        {
+          "signal": "confidence_ks",
+          "value": 0.0,
+          "statistic": 0.1977,
+          "baseline_mean_confidence": 0.6314,
+          "current_mean_confidence": 0.6033,
+          "delta": -0.0281,
+          "threshold": 0.01,
+          "min_effect": 0.02,
+          "statistically_significant": true,
+          "materially_large": true,
+          "breached": true,
+          "interpretation": "confidence shifted materially (0.631 -> 0.603, delta -0.028)"
+        },
+        {
+          "signal": "doc_length_sigma",
+          "value": 0.71,
+          "baseline_mean_tokens": 12.89,
+          "current_mean_tokens": 8.0,
+          "baseline_sigma": 6.88,
+          "threshold_investigate": 1.0,
+          "threshold_halt": 2.0,
+          "level": "OK",
+          "breached": false,
+          "interpretation": "mean length moved 0.71 sigma (12.9 -> 8.0 tokens)"
+        }
+      ],
+      "signals_breached": [
+        "oov_rate",
+        "token_frequency_chi2",
+        "confidence_ks"
+      ],
+      "n_breached": 3,
+      "decision": "RETRAIN",
+      "rationale": "3 of 4 signals breached (>= 2 required) and 600 samples available (>= 500 required)"
+    },
+    {
+      "window": "W2_topic_drift",
+      "n_baseline": 5496,
+      "n_current": 600,
+      "signals": [
+        {
+          "signal": "oov_rate",
+          "value": 0.276,
+          "threshold": 0.15,
+          "breached": true,
+          "interpretation": "new vocabulary entering the traffic"
+        },
+        {
+          "signal": "token_frequency_chi2",
+          "value": 0.0,
+          "statistic": 3332.2,
+          "top_k": 200,
+          "threshold": 0.01,
+          "breached": true,
+          "interpretation": "token mix has shifted significantly"
+        },
+        {
+          "signal": "confidence_ks",
+          "value": 0.0,
+          "statistic": 0.1992,
+          "baseline_mean_confidence": 0.6314,
+          "current_mean_confidence": 0.5726,
+          "delta": -0.0588,
+          "threshold": 0.01,
+          "min_effect": 0.02,
+          "statistically_significant": true,
+          "materially_large": true,
+          "breached": true,
+          "interpretation": "confidence shifted materially (0.631 -> 0.573, delta -0.059)"
+        },
+        {
+          "signal": "doc_length_sigma",
+          "value": 0.3846,
+          "baseline_mean_tokens": 12.89,
+          "current_mean_tokens": 10.24,
+          "baseline_sigma": 6.88,
+          "threshold_investigate": 1.0,
+          "threshold_halt": 2.0,
+          "level": "OK",
+          "breached": false,
+          "interpretation": "mean length moved 0.38 sigma (12.9 -> 10.2 tokens)"
+        }
+      ],
+      "signals_breached": [
+        "oov_rate",
+        "token_frequency_chi2",
+        "confidence_ks"
+      ],
+      "n_breached": 3,
+      "decision": "RETRAIN",
+      "rationale": "3 of 4 signals breached (>= 2 required) and 600 samples available (>= 500 required)"
+    },
+    {
+      "window": "W3_format_drift",
+      "n_baseline": 5496,
+      "n_current": 600,
+      "signals": [
+        {
+          "signal": "oov_rate",
+          "value": 0.0889,
+          "threshold": 0.15,
+          "breached": false,
+          "interpretation": "vocabulary consistent with training"
+        },
+        {
+          "signal": "token_frequency_chi2",
+          "value": 0.003565,
+          "statistic": 256.84,
+          "top_k": 200,
+          "threshold": 0.01,
+          "breached": true,
+          "interpretation": "token mix has shifted significantly"
+        },
+        {
+          "signal": "confidence_ks",
+          "value": 0.001201,
+          "statistic": 0.0824,
+          "baseline_mean_confidence": 0.6314,
+          "current_mean_confidence": 0.6221,
+          "delta": -0.0093,
+          "threshold": 0.01,
+          "min_effect": 0.02,
+          "statistically_significant": true,
+          "materially_large": false,
+          "breached": false,
+          "interpretation": "statistically significant but below the 0.02 effect floor (delta -0.009) -- not actioned"
+        },
+        {
+          "signal": "doc_length_sigma",
+          "value": 7.5082,
+          "baseline_mean_tokens": 12.89,
+          "current_mean_tokens": 64.54,
+          "baseline_sigma": 6.88,
+          "threshold_investigate": 1.0,
+          "threshold_halt": 2.0,
+          "level": "HALT",
+          "breached": true,
+          "interpretation": "mean length moved 7.51 sigma (12.9 -> 64.5 tokens)"
+        }
+      ],
+      "signals_breached": [
+        "token_frequency_chi2",
+        "doc_length_sigma"
+      ],
+      "n_breached": 2,
+      "decision": "RETRAIN",
+      "rationale": "2 of 4 signals breached (>= 2 required) and 600 samples available (>= 500 required)"
+    },
+    {
+      "window": "W4_drift_below_sample_minimum",
+      "n_baseline": 5496,
+      "n_current": 120,
+      "signals": [
+        {
+          "signal": "oov_rate",
+          "value": 0.2702,
+          "threshold": 0.15,
+          "breached": true,
+          "interpretation": "new vocabulary entering the traffic"
+        },
+        {
+          "signal": "token_frequency_chi2",
+          "value": 0.0,
+          "statistic": 750.26,
+          "top_k": 200,
+          "threshold": 0.01,
+          "breached": true,
+          "interpretation": "token mix has shifted significantly"
+        },
+        {
+          "signal": "confidence_ks",
+          "value": 0.000225,
+          "statistic": 0.1947,
+          "baseline_mean_confidence": 0.6314,
+          "current_mean_confidence": 0.5762,
+          "delta": -0.0552,
+          "threshold": 0.01,
+          "min_effect": 0.02,
+          "statistically_significant": true,
+          "materially_large": true,
+          "breached": true,
+          "interpretation": "confidence shifted materially (0.631 -> 0.576, delta -0.055)"
+        },
+        {
+          "signal": "doc_length_sigma",
+          "value": 0.4137,
+          "baseline_mean_tokens": 12.89,
+          "current_mean_tokens": 10.04,
+          "baseline_sigma": 6.88,
+          "threshold_investigate": 1.0,
+          "threshold_halt": 2.0,
+          "level": "OK",
+          "breached": false,
+          "interpretation": "mean length moved 0.41 sigma (12.9 -> 10.0 tokens)"
+        }
+      ],
+      "signals_breached": [
+        "oov_rate",
+        "token_frequency_chi2",
+        "confidence_ks"
+      ],
+      "n_breached": 3,
+      "decision": "HOLD",
+      "rationale": "3 signals breached but only 120 samples (< 500). Retraining on too little data would overfit the drift instead of correcting for it."
+    }
+  ]
+}

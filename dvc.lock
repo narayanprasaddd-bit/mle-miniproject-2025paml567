@@ -5,8 +5,8 @@ stages:
     deps:
     - path: configs/sentiment.yaml
       hash: md5
-      md5: ccf43c1f1efdb6bb212fd7a87f693d44
-      size: 3787
+      md5: ecb6a271e7506b016e02bf1744fede32
+      size: 4108
     - path: data/raw/train.csv
       hash: md5
       md5: 42e084fd222e24347c26112b9400873f
@@ -22,22 +22,22 @@ stages:
     outs:
     - path: reports/validation_report.json
       hash: md5
-      md5: d5abe7e5ca4140082127214291c862e7
+      md5: a2fb01a0381be3b8aef51f328588e6a2
       size: 742
   ingest:
     cmd: python -m src.ingest.load --config configs/sentiment.yaml
     deps:
     - path: configs/sentiment.yaml
       hash: md5
-      md5: ccf43c1f1efdb6bb212fd7a87f693d44
-      size: 3787
+      md5: ecb6a271e7506b016e02bf1744fede32
+      size: 4108
     - path: data/raw/train.csv
       hash: md5
       md5: 42e084fd222e24347c26112b9400873f
       size: 4642628
     - path: reports/validation_report.json
       hash: md5
-      md5: d5abe7e5ca4140082127214291c862e7
+      md5: a2fb01a0381be3b8aef51f328588e6a2
       size: 742
     - path: src/ingest/load.py
       hash: md5
@@ -50,15 +50,15 @@ stages:
       size: 1810921
     - path: reports/ingest_audit.json
       hash: md5
-      md5: da454701f4c41b0a70d10e36082ead70
+      md5: 8516e72ffa86b80adae9806d837dbbd9
       size: 1015
   build_features:
     cmd: python -m src.features.build --config configs/sentiment.yaml
     deps:
     - path: configs/sentiment.yaml
       hash: md5
-      md5: ccf43c1f1efdb6bb212fd7a87f693d44
-      size: 3787
+      md5: ecb6a271e7506b016e02bf1744fede32
+      size: 4108
     - path: data/processed/clean.parquet
       hash: md5
       md5: 149447613c1bc86d723b028b1d921ac8
@@ -78,9 +78,105 @@ stages:
       size: 3088384
     - path: models/feature_bundle.joblib
       hash: md5
-      md5: 337f8ed49fdba8ad850d87b7eaa5ce01
+      md5: 31c1a3c02fee08f760ec240fd41fe946
       size: 677761
     - path: reports/feature_manifest.json
       hash: md5
-      md5: 8a864f4da91b04306e938fca625da1cc
+      md5: b3a05c2aae5b58da6749292016dcc0b5
       size: 731
+  train:
+    cmd: python -m src.training.train --config configs/sentiment.yaml --run all
+    deps:
+    - path: configs/sentiment.yaml
+      hash: md5
+      md5: ecb6a271e7506b016e02bf1744fede32
+      size: 4108
+    - path: data/processed/feature_store.db
+      hash: md5
+      md5: 7aba63d14b11f5cfba08bcd3ac6e2dac
+      size: 3088384
+    - path: models/feature_bundle.joblib
+      hash: md5
+      md5: 31c1a3c02fee08f760ec240fd41fe946
+      size: 677761
+    - path: src/training/train.py
+      hash: md5
+      md5: 9405433998ea9fc5389a0e0a7c164a07
+      size: 10266
+    outs:
+    - path: reports/model_comparison.json
+      hash: md5
+      md5: e1653be54b82459acaa2c31d26353216
+      size: 2394
+  significance:
+    cmd: python -m src.training.significance --config configs/sentiment.yaml
+    deps:
+    - path: data/processed/feature_store.db
+      hash: md5
+      md5: 7aba63d14b11f5cfba08bcd3ac6e2dac
+      size: 3088384
+    - path: models/feature_bundle.joblib
+      hash: md5
+      md5: 31c1a3c02fee08f760ec240fd41fe946
+      size: 677761
+    - path: reports/model_comparison.json
+      hash: md5
+      md5: e1653be54b82459acaa2c31d26353216
+      size: 2394
+    - path: src/training/significance.py
+      hash: md5
+      md5: 9952ab20b6128bef6e02968f85480f0f
+      size: 5954
+    outs:
+    - path: reports/significance_test.json
+      hash: md5
+      md5: e317123a729ad5538a001ff77d7a6c4d
+      size: 964
+  reproduce:
+    cmd: python -m src.training.reproduce --config configs/sentiment.yaml
+    deps:
+    - path: reports/model_comparison.json
+      hash: md5
+      md5: e1653be54b82459acaa2c31d26353216
+      size: 2394
+    - path: src/training/reproduce.py
+      hash: md5
+      md5: 2785bd7717ec7b36fa03c383dfa5841b
+      size: 7101
+    outs:
+    - path: reports/reproducibility_audit.json
+      hash: md5
+      md5: c7a0afdb182f3dffa7d4f5a876955142
+      size: 478
+  monitor:
+    cmd: python -m src.monitoring.drift --config configs/sentiment.yaml
+    deps:
+    - path: configs/sentiment.yaml
+      hash: md5
+      md5: ecb6a271e7506b016e02bf1744fede32
+      size: 4108
+    - path: data/processed/feature_store.db
+      hash: md5
+      md5: 7aba63d14b11f5cfba08bcd3ac6e2dac
+      size: 3088384
+    - path: models/classifier.joblib
+      hash: md5
+      md5: 5551d575511554ecf26746c1bf3d991b
+      size: 481103
+    - path: models/feature_bundle.joblib
+      hash: md5
+      md5: 31c1a3c02fee08f760ec240fd41fe946
+      size: 677761
+    - path: src/monitoring/drift.py
+      hash: md5
+      md5: e5cfc8a8f2dafecf9f9ef6332e978aa4
+      size: 16640
+    - path: src/monitoring/simulate.py
+      hash: md5
+      md5: 19ef97444d20e8f024e4ef17eb080de4
+      size: 6099
+    outs:
+    - path: reports/drift_report.json
+      hash: md5
+      md5: c72475bc6ad674c93c88d5f60c3ba828
+      size: 9283
