@@ -61,16 +61,32 @@ cancels and only the model difference remains.
 
 | Run | 95% CI on f1_macro |
 |---|---|
-| run1_baseline_logreg | 0.6808 [0.6689, 0.6925] |
-| run2_linearsvc | 0.6714 [0.6589, 0.6841] |
-| run3_logreg_C0.5 | 0.6787 [0.6660, 0.6903] |
+| run1_baseline_logreg | 0.6820 [0.6698, 0.6940] |
+| run2_linearsvc | 0.6738 [0.6612, 0.6870] |
+| run3_logreg_C0.5 | 0.6772 [0.6646, 0.6887] |
 
 Paired differences against the baseline:
 
 | Comparison | Difference | 95% CI | Verdict |
 |---|---|---|---|
-| run1 − run2_linearsvc | +0.0094 | [+0.0010, +0.0176] | **Meaningful** — interval excludes zero |
-| run1 − run3_logreg_C0.5 | +0.0020 | [−0.0040, +0.0078] | **Noise** — interval spans zero |
+| run1 − run2_linearsvc | +0.0082 | [−0.0004, +0.0161] | **Noise** — interval spans zero, narrowly |
+| run1 − run3_logreg_C0.5 | +0.0048 | [−0.0013, +0.0108] | **Noise** — interval spans zero |
+
+**All three runs are statistically indistinguishable on this test set.** The
+point estimates differ and the ordering is stable, but not one of the pairwise
+differences survives resampling.
+
+That is the most useful result the experiment could have produced, because it
+rules out an entire line of reasoning: **no amount of further comparison between
+these three will identify a better model.** The remaining choice has to be made
+on grounds other than score, which is what §4 and §5 do.
+
+Note how close run2 sits to the boundary: [−0.0004, +0.0161] excludes zero by
+0.0004 in one direction and includes it by 0.0004 in the other. A different
+random seed for the resampling would plausibly flip the verdict. **A conclusion
+that depends on the resampling seed is not a conclusion**, and treating this as
+"run2 is worse" would be exactly the error the bootstrap was introduced to
+prevent.
 
 Reproduce with `python -m src.training.significance --config configs/sentiment.yaml`.
 Full output in `reports/significance_test.json`.
@@ -83,12 +99,15 @@ Full output in `reports/significance_test.json`.
 margin rather than likelihood. On high-dimensional sparse text this often edges
 out logistic regression, so a small gain was expected.
 
-**Result.** It lost, and the loss is real: the paired 95% CI is
-[+0.0010, +0.0176] and excludes zero. This is not a coin-flip.
+**Result.** It scored 0.0082 lower, but the paired 95% CI is [−0.0004, +0.0161]
+and spans zero. **The score difference is not statistically distinguishable from
+noise**, so it cannot carry the decision.
 
-**Two independent reasons to reject it:**
+**Which means the rejection rests entirely on the second reason — and that is
+the stronger argument anyway.**
 
-1. **It scored worse**, and the gap survives resampling.
+1. ~~It scored worse~~ — the apparent gap does not survive resampling. Discarded
+   as grounds for the decision.
 2. **It cannot produce probabilities.** `LinearSVC` has no `predict_proba`.
    That is disqualifying regardless of score, because two downstream
    components depend on calibrated confidence:
@@ -101,11 +120,20 @@ out logistic regression, so a small gain was expected.
    layer, extra artefact, and extra failure surface — to reach a score that is
    already lower.
 
-**A note on the second reason.** Had LinearSVC *won* on score, this would have
-been the interesting decision: a better classifier that breaks two system
-requirements. The system requirement would still have taken precedence, and
-that reasoning would have been recorded here. It happened not to be tested,
-because the score went the other way.
+**This is the interesting decision in the project.** LinearSVC is, on the
+evidence, **as good a classifier as the baseline** — the bootstrap cannot
+separate them. It was rejected anyway, because it breaks two system
+requirements that have nothing to do with predictive quality.
+
+A modelling choice was decided by a *serving* constraint. That is the ordering
+ML Engineering argues for and that a purely model-centric view would get
+backwards: the best classifier that cannot be monitored is worse than an
+equivalent classifier that can be.
+
+Recovering probabilities from LinearSVC would require Platt scaling — an extra
+calibration layer, an extra artefact to version, and an extra failure surface —
+to reach a score that is statistically identical to what the baseline already
+gives for free.
 
 ---
 
@@ -114,7 +142,7 @@ because the score went the other way.
 **Hypothesis before running.** 20,000 features against 21,984 training rows is
 a wide problem, so halving `C` (doubling the penalty) might generalise better.
 
-**Result.** −0.0020, with a 95% CI of [−0.0040, +0.0078] that spans zero. The
+**Result.** −0.0048, with a 95% CI of [−0.0013, +0.0108] that spans zero. The
 two models are **statistically indistinguishable** on this data.
 
 **So the choice between them cannot be made on score.** Deciding by the fourth

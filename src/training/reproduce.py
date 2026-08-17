@@ -148,8 +148,14 @@ def main() -> int:
         if original is None:
             continue
         delta = abs(original - value)
-        match = delta < TOLERANCE
-        all_match = all_match and match
+        # bool() is not cosmetic: original - value is a numpy float, so the
+        # comparison yields numpy.bool_, which json.dump cannot serialise.
+        # This raised "TypeError: Object of type bool_ is not JSON serializable"
+        # and failed the dvc `reproduce` stage after the comparison had already
+        # printed correctly -- a reminder that a passing console output is not
+        # the same as a passing stage.
+        match = bool(delta < TOLERANCE)
+        all_match = bool(all_match and match)
         comparison_rows[name] = {
             "logged": round(original, 6),
             "recomputed": round(value, 6),
