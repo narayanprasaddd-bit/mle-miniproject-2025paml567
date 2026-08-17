@@ -1,0 +1,33 @@
+{
+  "timestamp_utc": "2026-08-17T18:07:44.055350+00:00",
+  "task": "sentiment",
+  "source": "data/processed/clean.parquet",
+  "rows_total": 27480,
+  "rows_train": 21984,
+  "rows_test": 5496,
+  "split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "stratified": true
+  },
+  "vectorizer": {
+    "lowercase": true,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "max_features": 20000,
+    "min_df": 2,
+    "sublinear_tf": true,
+    "stop_words": null,
+    "normalisation": "str().strip()"
+  },
+  "vocabulary_size": 20000,
+  "n_features": 20000,
+  "baseline_oov_rate_on_test": 0.090853,
+  "label_distribution_train": {
+    "neutral": 0.4046,
+    "positive": 0.3123,
+    "negative": 0.2832
+  }
+}

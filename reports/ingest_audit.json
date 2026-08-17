@@ -1,0 +1,30 @@
+{
+  "timestamp_utc": "2026-08-17T18:07:36.195401+00:00",
+  "source": "data/raw/train.csv",
+  "initial_rows": 27481,
+  "final_rows": 27480,
+  "total_rows_dropped": 1,
+  "steps": [
+    {
+      "action": "drop_null_text",
+      "rows_before": 27481,
+      "rows_after": 27480,
+      "rows_affected": 1,
+      "reason": "BR-04: 'text' was null; a null cannot be featurised"
+    },
+    {
+      "action": "strip_whitespace",
+      "rows_before": 27480,
+      "rows_after": 27480,
+      "rows_affected": 0,
+      "reason": "BR-03: 10974 rows had leading whitespace (skew vector); stripped identically to the serving path"
+    },
+    {
+      "action": "drop_excluded_columns",
+      "rows_before": 27480,
+      "rows_after": 27480,
+      "rows_affected": 0,
+      "reason": "dropped 7 column(s) per config: selected_text, Time of Tweet, Age of User, Country, Population -2020, Land Area (Km\u00b2), Density (P/Km\u00b2) (leakage + fabricated metadata, see DATA_QUALITY_INCIDENT.md)"
+    }
+  ]
+}

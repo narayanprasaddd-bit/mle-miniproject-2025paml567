@@ -1,0 +1,86 @@
+schema: '2.0'
+stages:
+  validate:
+    cmd: python -m src.validation.validate --config configs/sentiment.yaml
+    deps:
+    - path: configs/sentiment.yaml
+      hash: md5
+      md5: ccf43c1f1efdb6bb212fd7a87f693d44
+      size: 3787
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 42e084fd222e24347c26112b9400873f
+      size: 4642628
+    - path: src/validation/schema.py
+      hash: md5
+      md5: 5ab882ba26134d98a16c51bd9a6bcc7f
+      size: 9364
+    - path: src/validation/validate.py
+      hash: md5
+      md5: 66f740fd8c2c8603fca04db59fe46e4e
+      size: 5530
+    outs:
+    - path: reports/validation_report.json
+      hash: md5
+      md5: d5abe7e5ca4140082127214291c862e7
+      size: 742
+  ingest:
+    cmd: python -m src.ingest.load --config configs/sentiment.yaml
+    deps:
+    - path: configs/sentiment.yaml
+      hash: md5
+      md5: ccf43c1f1efdb6bb212fd7a87f693d44
+      size: 3787
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 42e084fd222e24347c26112b9400873f
+      size: 4642628
+    - path: reports/validation_report.json
+      hash: md5
+      md5: d5abe7e5ca4140082127214291c862e7
+      size: 742
+    - path: src/ingest/load.py
+      hash: md5
+      md5: a677655c5e95b4e39d12693b1e9f752f
+      size: 6046
+    outs:
+    - path: data/processed/clean.parquet
+      hash: md5
+      md5: 149447613c1bc86d723b028b1d921ac8
+      size: 1810921
+    - path: reports/ingest_audit.json
+      hash: md5
+      md5: da454701f4c41b0a70d10e36082ead70
+      size: 1015
+  build_features:
+    cmd: python -m src.features.build --config configs/sentiment.yaml
+    deps:
+    - path: configs/sentiment.yaml
+      hash: md5
+      md5: ccf43c1f1efdb6bb212fd7a87f693d44
+      size: 3787
+    - path: data/processed/clean.parquet
+      hash: md5
+      md5: 149447613c1bc86d723b028b1d921ac8
+      size: 1810921
+    - path: src/features/build.py
+      hash: md5
+      md5: 831a44d4be5c8f76fb84fc2bb9fa78d0
+      size: 6086
+    - path: src/features/text_features.py
+      hash: md5
+      md5: 5e644faf7d0afebdd744fed2b6db0b1b
+      size: 9073
+    outs:
+    - path: data/processed/feature_store.db
+      hash: md5
+      md5: 7aba63d14b11f5cfba08bcd3ac6e2dac
+      size: 3088384
+    - path: models/feature_bundle.joblib
+      hash: md5
+      md5: 337f8ed49fdba8ad850d87b7eaa5ce01
+      size: 677761
+    - path: reports/feature_manifest.json
+      hash: md5
+      md5: 8a864f4da91b04306e938fca625da1cc
+      size: 731

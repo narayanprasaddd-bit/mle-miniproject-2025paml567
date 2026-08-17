@@ -55,3 +55,7 @@ desktop.ini
 *.log
 logs/
 !reports/*.log
+
+# .dvc pointer files MUST stay visible to Git - they are the version record
+!/data/raw/*.dvc
+!/data/processed/*.dvc

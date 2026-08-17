@@ -1,0 +1,63 @@
+# ============================================================================
+# DVC pipeline definition.
+# ----------------------------------------------------------------------------
+# Each stage declares its dependencies and outputs. DVC builds a DAG from them
+# and re-runs only what a change actually invalidates.
+#
+#   dvc repro                 run the whole pipeline (skipping unchanged stages)
+#   dvc repro build_features  run one stage and its upstream dependencies
+#   dvc dag                   print the dependency graph
+#   dvc status                show what is stale and why
+#
+# The reason this file matters for the M2/M3 rubric lines: it makes the pipeline
+# DECLARATIVE. Anyone cloning the repository can reproduce every artefact with
+# one command, without needing to know the correct order to run the scripts in.
+# The ordering is encoded here rather than living in someone's head.
+# ============================================================================
+
+stages:
+
+  validate:
+    desc: "M2 four-level validation gate. Exits 1 on blocking failure."
+    cmd: python -m src.validation.validate --config configs/sentiment.yaml
+    deps:
+      - data/raw/train.csv
+      - src/validation/schema.py
+      - src/validation/validate.py
+      - configs/sentiment.yaml
+    outs:
+      - reports/validation_report.json:
+          cache: false
+
+  ingest:
+    desc: "Clean the raw data with a full audit trail. No silent filtering."
+    cmd: python -m src.ingest.load --config configs/sentiment.yaml
+    deps:
+      - data/raw/train.csv
+      - src/ingest/load.py
+      - configs/sentiment.yaml
+      - reports/validation_report.json   # forces validate to run first
+    outs:
+      - data/processed/clean.parquet
+      - reports/ingest_audit.json:
+          cache: false
+
+  build_features:
+    desc: "Split, fit the vectorizer on train only, write the feature store."
+    cmd: python -m src.features.build --config configs/sentiment.yaml
+    deps:
+      - data/processed/clean.parquet
+      - src/features/text_features.py
+      - src/features/build.py
+      - configs/sentiment.yaml
+    outs:
+      - data/processed/feature_store.db
+      - models/feature_bundle.joblib
+    metrics:
+      - reports/feature_manifest.json:
+          cache: false
+
+  # ------------------------------------------------------------------------
+  # Sprint 2 will add:  train  (MLflow-tracked experiments)
+  # Sprint 4 will add:  monitor (drift signals against the baseline manifest)
+  # ------------------------------------------------------------------------
