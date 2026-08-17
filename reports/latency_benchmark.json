@@ -1,0 +1,31 @@
+{
+  "artefact_load_ms": 396.4,
+  "n_trials": 500,
+  "single_request_ms": {
+    "p50": 0.5607,
+    "p95": 1.1034,
+    "p99": 1.5212,
+    "max": 1.6492,
+    "mean": 0.6918
+  },
+  "throughput_req_per_sec_per_worker": 1445,
+  "batch": {
+    "1": {
+      "total_ms": 0.81,
+      "per_item_ms": 0.8104
+    },
+    "10": {
+      "total_ms": 1.068,
+      "per_item_ms": 0.1068
+    },
+    "50": {
+      "total_ms": 1.612,
+      "per_item_ms": 0.0322
+    },
+    "100": {
+      "total_ms": 2.667,
+      "per_item_ms": 0.0267
+    }
+  },
+  "batch_100_speedup_per_item": 30.35
+}
