@@ -59,3 +59,14 @@ logs/
 # .dvc pointer files MUST stay visible to Git - they are the version record
 !/data/raw/*.dvc
 !/data/processed/*.dvc
+# Append these lines to your existing .gitignore (do NOT replace the file).
+# In Git Bash:
+#   cat GITIGNORE_APPEND.txt >> .gitignore
+# then delete this file.
+
+# MLflow local tracking store
+# Artifacts are large and every run is reproducible from its logged config,
+# so the store itself is not version-controlled. The comparison and audit
+# JSONs in reports/ ARE committed - they are the evidence.
+mlruns/
+mlartifacts/

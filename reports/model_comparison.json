@@ -1,0 +1,61 @@
+{
+  "timestamp_utc": "2026-08-17T19:00:27.395606+00:00",
+  "primary_metric": "f1_macro",
+  "runs": [
+    {
+      "run": "run1_baseline_logreg",
+      "run_id": "ed72d76c468f46208c0eb48df7a59f34",
+      "varied": "none (baseline)",
+      "hypothesis": "A linear model on TF-IDF features establishes the floor. Text classification on lexically obvious sentiment is largely a word-presence problem, so this should already be competitive.",
+      "params": {
+        "model_family": "LogisticRegression",
+        "C": 1.0,
+        "max_iter": 1000
+      },
+      "metrics": {
+        "f1_macro": 0.6821,
+        "f1_weighted": 0.6815,
+        "accuracy": 0.6807,
+        "precision_macro": 0.7019,
+        "recall_macro": 0.6725
+      }
+    },
+    {
+      "run": "run2_linearsvc",
+      "run_id": "5ed16d651e6945eba82288a74b952378",
+      "varied": "algorithm (logistic -> hinge loss)",
+      "hypothesis": "LinearSVC optimises a hinge loss and a maximum margin rather than likelihood. On high-dimensional sparse text it often edges out logistic regression. Expected: comparable, possibly +0.01 F1. Trade-off: no native predict_proba, which the serving layer and the M5 confidence drift signal both require.",
+      "params": {
+        "model_family": "LinearSVC",
+        "C": 1.0
+      },
+      "metrics": {
+        "f1_macro": 0.6739,
+        "f1_weighted": 0.6712,
+        "accuracy": 0.6705,
+        "precision_macro": 0.6778,
+        "recall_macro": 0.6708
+      }
+    },
+    {
+      "run": "run3_logreg_C0.5",
+      "run_id": "ee14b879197743cb89318f1f1be1770e",
+      "varied": "regularisation strength (C: 1.0 -> 0.5)",
+      "hypothesis": "20,000 features against 21,984 training rows is a wide problem, so stronger regularisation may generalise better. Halving C doubles the penalty. Expected: small change either way -- which is itself the useful result, because a flat response means the baseline was not overfitting.",
+      "params": {
+        "model_family": "LogisticRegression",
+        "C": 0.5,
+        "max_iter": 1000
+      },
+      "metrics": {
+        "f1_macro": 0.6773,
+        "f1_weighted": 0.6778,
+        "accuracy": 0.6776,
+        "precision_macro": 0.7065,
+        "recall_macro": 0.6656
+      }
+    }
+  ],
+  "selected_run": "run1_baseline_logreg",
+  "selected_run_id": "ed72d76c468f46208c0eb48df7a59f34"
+}

@@ -1,0 +1,39 @@
+{
+  "n_bootstrap": 1000,
+  "seed": 42,
+  "metric": "f1_macro",
+  "baseline": "run1_baseline_logreg",
+  "confidence_intervals": {
+    "run1_baseline_logreg": {
+      "mean": 0.682,
+      "ci_lower": 0.6698,
+      "ci_upper": 0.694
+    },
+    "run2_linearsvc": {
+      "mean": 0.6738,
+      "ci_lower": 0.6612,
+      "ci_upper": 0.687
+    },
+    "run3_logreg_C0.5": {
+      "mean": 0.6772,
+      "ci_lower": 0.6646,
+      "ci_upper": 0.6887
+    }
+  },
+  "paired_comparisons": {
+    "run2_linearsvc": {
+      "mean_difference": 0.0082,
+      "ci_lower": -0.0004,
+      "ci_upper": 0.0161,
+      "meaningful": false,
+      "interpretation": "interval spans zero -- indistinguishable from noise"
+    },
+    "run3_logreg_C0.5": {
+      "mean_difference": 0.0048,
+      "ci_lower": -0.0013,
+      "ci_upper": 0.0108,
+      "meaningful": false,
+      "interpretation": "interval spans zero -- indistinguishable from noise"
+    }
+  }
+}

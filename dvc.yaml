@@ -57,7 +57,40 @@ stages:
       - reports/feature_manifest.json:
           cache: false
 
+  train:
+    desc: "M3 MLflow-tracked experiments. Three runs, one variable each."
+    cmd: python -m src.training.train --config configs/sentiment.yaml --run all
+    deps:
+      - data/processed/feature_store.db
+      - models/feature_bundle.joblib
+      - src/training/train.py
+      - configs/sentiment.yaml
+    outs:
+      - reports/model_comparison.json:
+          cache: false
+
+  significance:
+    desc: "Bootstrap test: is the difference between runs real, or split noise?"
+    cmd: python -m src.training.significance --config configs/sentiment.yaml
+    deps:
+      - data/processed/feature_store.db
+      - models/feature_bundle.joblib
+      - src/training/significance.py
+      - reports/model_comparison.json
+    outs:
+      - reports/significance_test.json:
+          cache: false
+
+  reproduce:
+    desc: "Rebuild the selected run from logged params only; assert metrics match."
+    cmd: python -m src.training.reproduce --config configs/sentiment.yaml
+    deps:
+      - reports/model_comparison.json
+      - src/training/reproduce.py
+    outs:
+      - reports/reproducibility_audit.json:
+          cache: false
+
   # ------------------------------------------------------------------------
-  # Sprint 2 will add:  train  (MLflow-tracked experiments)
   # Sprint 4 will add:  monitor (drift signals against the baseline manifest)
   # ------------------------------------------------------------------------

@@ -1,0 +1,12 @@
+{
+  "run_id": "ed72d76c468f46208c0eb48df7a59f34",
+  "run_name": "run1_baseline_logreg",
+  "git_commit": "cfb4809",
+  "data_version_tag": "v1.0-raw",
+  "tolerance": 0.0001,
+  "metrics": {
+    "f1_macro": {
+      "logged": 0.682133,
+      "recomputed": 0.682133,
+      "delta": 0.0,
+      "match": 
