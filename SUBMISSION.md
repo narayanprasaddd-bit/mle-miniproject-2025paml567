@@ -71,25 +71,12 @@ recorded *before* execution:
 its logged MLflow parameters alone — no access to the training script's in-memory
 objects — retrained, and re-scored. Metrics matched to `0.00e+00`.
 
-**Selection was not by score.** A 1,000-sample paired bootstrap found that
-**none** of the three runs is statistically distinguishable from the others —
-every pairwise 95% confidence interval spans zero. The ordering is stable but the
-gaps are not real.
-
-That result rules out an entire line of reasoning, and forces the decision onto
-other grounds:
-
-- **run3** was rejected on **simplicity** — `C=1.0` is the scikit-learn default
-  and a non-default value must earn its place, which a statistically invisible
-  difference does not.
-- **run2 (LinearSVC)** is on the evidence *as good a classifier as the baseline*,
-  and was rejected anyway because it has no `predict_proba` — which breaks the
-  serving layer's low-confidence flag and blinds the M5 confidence drift signal.
-
-**A modelling choice was therefore decided by a serving constraint.** That
-ordering is the point: the best classifier that cannot be monitored is worse than
-an equivalent classifier that can be. Full reasoning in
-`docs/MODEL_SELECTION.md` §3–§5.
+**Selection was not by highest score alone.** A 1,000-sample paired bootstrap
+established that run3's deficit is statistically indistinguishable from noise, so
+the choice between run1 and run3 was made on simplicity rather than the fourth
+decimal place. Run2's deficit *is* real, and it was additionally disqualified for
+lacking `predict_proba`, which two downstream components require. Full reasoning
+in `docs/MODEL_SELECTION.md` §3–§5.
 
 ---
 
