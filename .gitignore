@@ -70,3 +70,4 @@ logs/
 # JSONs in reports/ ARE committed - they are the evidence.
 mlruns/
 mlartifacts/
+FINAL_CHECKLIST.md
