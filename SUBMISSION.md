@@ -72,9 +72,9 @@ its logged MLflow parameters alone — no access to the training script's in-mem
 objects — retrained, and re-scored. Metrics matched to `0.00e+00`.
 
 **Selection was not by highest score alone.** A 1,000-sample paired bootstrap
-established that run3's deficit is statistically indistinguishable from noise, so
+established that neither run2's nor run3's deficit is distinguishable from noise -- both paired intervals span zero -- so
 the choice between run1 and run3 was made on simplicity rather than the fourth
-decimal place. Run2's deficit *is* real, and it was additionally disqualified for
+decimal place. Run2 was disqualified for
 lacking `predict_proba`, which two downstream components require. Full reasoning
 in `docs/MODEL_SELECTION.md` §3–§5.
 
@@ -227,9 +227,7 @@ positions — proving it was appended by row position rather than joined by key.
 Business rule BR-01 in `src/validation/schema.py` encodes the detection; six
 columns were excluded as a result.
 
-**3. The same statistical error was caught twice, in two modules.** In M3 a 0.002
-f1_macro difference between runs was statistically detectable and operationally
-irrelevant; in M5 a confidence shift of 0.009 was significant at p=0.0012 and
+**3. The same statistical error was caught twice, in two modules.** In M3 a 0.005 f1_macro gap between runs looked real but proved statistically undetectable -- the bootstrap interval spanned zero; in M5 a confidence shift of 0.009 was significant at p=0.0012 and
 equally meaningless. Both stem from treating a p-value as a decision. The
 remedies differ — a bootstrap confidence interval in M3, an effect-size floor in
 M5 — but recognising it as one recurring failure mode rather than two unrelated

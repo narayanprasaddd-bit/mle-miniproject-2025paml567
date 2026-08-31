@@ -52,7 +52,7 @@ confidently wrong one is not.
 ## 3. Is the difference real? — bootstrap testing
 
 A test set is one sample. A different 20% split gives different numbers.
-Declaring a winner on a 0.002 margin is choosing noise, so the comparison was
+Declaring a winner on a 0.005 margin is choosing noise, so the comparison was
 tested rather than assumed.
 
 Method: 1,000 paired bootstrap resamples of the test set. Both models are

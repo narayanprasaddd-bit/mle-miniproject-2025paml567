@@ -145,7 +145,7 @@ accountable owner.
 The confidence signal originally fired on `p < 0.01` alone. On W3 that produced:
 
 ```
-p = 0.0025  (significant)      mean confidence 0.631 -> 0.622
+p = 0.0012  (significant)      mean confidence 0.631 -> 0.622
 ```
 
 A 0.009 shift in mean confidence is operationally meaningless. But with n=600
@@ -158,7 +158,7 @@ alert-fatigue failure W0 is designed to guard against.
 `|Δ mean confidence| ≥ 0.02`. W3's confidence signal is now reported as
 observed-but-not-actioned, and W3 correctly drops from 3 breaches to 2.
 
-**The same lesson appeared in Sprint 2**, where a 0.002 f1_macro difference
+**The same lesson appeared in Sprint 2**, where a 0.005 f1_macro difference
 between two runs was statistically detectable and operationally irrelevant.
 There the remedy was a bootstrap confidence interval; here it is an effect-size
 floor. Same underlying error — treating a p-value as a decision — caught twice
